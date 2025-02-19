@@ -29,3 +29,7 @@ provider "aws" {
   alias = "production"
   region = var.region
 }
+
+provider "aws" {
+  alias = "staging"
+}

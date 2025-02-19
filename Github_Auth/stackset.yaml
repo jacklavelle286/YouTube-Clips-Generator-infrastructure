@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  This template is a stack set of an OIDC provider and an IAM role for each of my GitHub Action
+  pipelines to authenticate to the dev, staging, and prod environments.
+
+# paramaterise to make it work across any account through stack sets, then we deploy this OIDC through stacksets to allow github actions 
+# to build code in any account 
+
+
+Parameters:
+  ClientListID:
+    Description: "Client List id"
+    Type: String
+    Default: "sts.amazonaws.com"
+  ThumbprintList:
+    Description: "List of thumbprints of the provider"
+    Type: String
+    Default: "6938fd4d98bab03faadb97b34396831e3780aea1"
+  OIDCURL:
+    Description: "OIDC URL"
+    Type: String
+    Default: "https://token.actions.githubusercontent.com"
+  TrustedRepo:
+    Description: "The repository that my IAM role is trusted to deploy to."
+    Type: String
+    Default: "repo:jacklavelle286/*"
+  PermissionsForRole:
+    Description: "Permissions for the Role"
+    Type: String
+    Default: "arn:aws:iam::aws:policy/AdministratorAccess"
+
+Resources:
+  OIDC:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      ClientIdList:
+        - !Ref ClientListID
+      ThumbprintList:
+        - !Ref ThumbprintList
+      Url: !Ref OIDCURL
+
+  OIDCRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "OIDCRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "WebIdentity"
+            Effect: "Allow"
+            Principal:
+              Federated: !GetAtt OIDC.Arn
+            Action: "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: "sts.amazonaws.com"
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Ref TrustedRepo
+      ManagedPolicyArns:
+        - !Ref PermissionsForRole

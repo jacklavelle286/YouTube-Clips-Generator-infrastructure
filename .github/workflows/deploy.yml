@@ -30,7 +30,7 @@ jobs:
         with:
           # Now TARGET_ACCOUNT is available in the env context
           role-to-assume: "arn:aws:iam::${{ env.TARGET_ACCOUNT }}:role/OIDCRole"
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          role-session-name: OIDCRole
           aws-region: ${{ env.REGION }}
 
       - name: STS Get Caller Identity

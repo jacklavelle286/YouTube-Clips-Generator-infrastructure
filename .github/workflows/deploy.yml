@@ -8,7 +8,7 @@ env:
     REGION: "eu-west-2"
     TARGET_ACCOUNT: "${{ fromJson('{\"prod\": \"559050248035\", \"dev\": \"123456789012\", \"staging\": \"987654321098\"}')[github.event.inputs.environment] }}"
 
-    jobs:
+jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:

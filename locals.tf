@@ -11,5 +11,5 @@ locals {
     staging = "890742571404"
   }
   // Look up the target account from the environment variable.
-  target_account = lookup(local.account_map, var.environment)
+  target_account = lookup(local.account_map, var.environment, "559050248035")
 }

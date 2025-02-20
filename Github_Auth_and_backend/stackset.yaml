@@ -78,10 +78,10 @@ Resources:
       TableName: !Sub "${AWS::AccountId}-${AWS::Region}-backend-infra-tf-yt-lock"
       BillingMode: PAY_PER_REQUEST
       KeySchema:
-        - AttributeName: "LockId"
+        - AttributeName: "LockID"
           KeyType: "HASH"
       AttributeDefinitions:
-        - AttributeName: "LockId"
+        - AttributeName: "LockID"
           AttributeType: "S"
 Outputs:
   OIDCRoleArn:

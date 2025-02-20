@@ -1,1 +1,41 @@
+name: Terraform Deployment
 
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to (prod, dev, staging)'
+        required: true
+        default: 'dev'
+
+env:
+  REGION: "eu-west-2"
+  # Mapping of environments to AWS account IDs for backend config.
+  # (This duplicates the mapping from Terraform because backend config doesn't support variables.)
+  TARGET_ACCOUNT: ${{ fromJson('{"prod": "559050248035", "dev": "123456789012", "staging": "987654321098"}')[github.event.inputs.environment] }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.5
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.TARGET_ACCOUNT }}-${{ env.REGION }}-backend-infra-tf-yt" \
+            -backend-config="region=${{ env.REGION }}" \
+            -backend-config="dynamodb_table=${{ env.TARGET_ACCOUNT }}-${{ env.REGION }}-backend-infra-tf-yt-lock" \
+            -backend-config="key=terraform/state.tfstate"
+
+      - name: Terraform Plan
+        run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -var="region=${{ env.REGION }}"
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="environment=${{ github.event.inputs.environment }}" -var="region=${{ env.REGION }}"

@@ -1,35 +1,8 @@
-terraform {
-  backend "s3" {
-    bucket         = "backendtfstate-youtubeclips-infra"
-    key            = "terraform.tfstate"
-    region         = "eu-west-2"
-    dynamodb_table = "terraform-lock-table"
+// providers.tf
+provider "aws" {
+  region = var.region
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.target_account}:role/OIDCRole"
   }
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-
-    }
-
-  }
-}
-
-provider "aws" {
-  alias = "dev"
-  region = var.region
-}
-
-provider "aws" {
-  alias = "staging"
-  region = var.region
-}
-
-provider "aws" {
-  alias = "production"
-  region = var.region
-}
-
-provider "aws" {
-  alias = "staging"
 }

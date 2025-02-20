@@ -1,11 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
   This template is a stack set of an OIDC provider and an IAM role for each of my GitHub Action
-  pipelines to authenticate to the dev, staging, and prod environments.
-
-# paramaterise to make it work across any account through stack sets, then we deploy this OIDC through stacksets to allow github actions 
-# to build code in any account 
-
+  pipelines to authenticate to the dev, staging, and prod environments. This also includes pre-configured backend state files
+  and table locks to allow my infra to be separate across accounts (dev, staging, prod) which will be conditionally not launched
+  if this stack is deployed in the shared services ECR repo account, as there is no nee for a terraform backend in this account.
 
 Parameters:
   ClientListID:
@@ -28,6 +26,14 @@ Parameters:
     Description: "Permissions for the Role"
     Type: String
     Default: "arn:aws:iam::aws:policy/AdministratorAccess"
+  SharedServicesAccountID:
+    Description: The account id of the shared services account.
+    Type: String
+    Default: "908027392835"
+
+Conditions:
+  IsNotSpecificAccount: !Not 
+    - !Equals [ !Ref "AWS::AccountId", !Ref SharedServicesAccountID ]
 
 Resources:
   OIDC:
@@ -53,8 +59,31 @@ Resources:
             Action: "sts:AssumeRoleWithWebIdentity"
             Condition:
               StringEquals:
-                token.actions.githubusercontent.com:aud: "sts.amazonaws.com"
+                "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
               StringLike:
-                token.actions.githubusercontent.com:sub: !Ref TrustedRepo
+                "token.actions.githubusercontent.com:sub": !Ref TrustedRepo
       ManagedPolicyArns:
         - !Ref PermissionsForRole
+
+  S3Backend:
+    Type: AWS::S3::Bucket
+    Condition: IsNotSpecificAccount
+    Properties:
+      BucketName: !Sub "${AWS::AccountId}-${AWS::Region}-backend-infra-tf-yt"
+
+  DynamoLock:
+    Type: AWS::DynamoDB::Table
+    Condition: IsNotSpecificAccount
+    Properties:
+      TableName: !Sub "${AWS::AccountId}-${AWS::Region}-backend-infra-tf-yt-lock"
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: "LockId"
+          KeyType: "HASH"
+      AttributeDefinitions:
+        - AttributeName: "LockId"
+          AttributeType: "S"
+Outputs:
+  OIDCRoleArn:
+    Description: Role arn for the OIDC
+    Value: !GetAtt OIDCRole.Arn

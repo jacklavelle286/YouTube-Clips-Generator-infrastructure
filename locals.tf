@@ -5,7 +5,6 @@ locals {
 }
 
 locals {
-  // Mapping of environment to target AWS account IDs
   account_map = {
     prod    = "559050248035"
     dev     = "123456789012"

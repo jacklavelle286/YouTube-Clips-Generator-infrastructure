@@ -26,14 +26,6 @@ Parameters:
     Description: "Permissions for the Role"
     Type: String
     Default: "arn:aws:iam::aws:policy/AdministratorAccess"
-  SharedServicesAccountID:
-    Description: The account id of the shared services account.
-    Type: String
-    Default: "908027392835"
-
-Conditions:
-  IsNotSpecificAccount: !Not 
-    - !Equals [ !Ref "AWS::AccountId", !Ref SharedServicesAccountID ]
 
 Resources:
   OIDC:
@@ -67,13 +59,11 @@ Resources:
 
   S3Backend:
     Type: AWS::S3::Bucket
-    Condition: IsNotSpecificAccount
     Properties:
       BucketName: !Sub "${AWS::AccountId}-${AWS::Region}-backend-infra-tf-yt"
 
   DynamoLock:
     Type: AWS::DynamoDB::Table
-    Condition: IsNotSpecificAccount
     Properties:
       TableName: !Sub "${AWS::AccountId}-${AWS::Region}-backend-infra-tf-yt-lock"
       BillingMode: PAY_PER_REQUEST

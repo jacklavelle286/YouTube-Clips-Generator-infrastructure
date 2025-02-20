@@ -7,7 +7,7 @@ on:
 env:
     REGION: "eu-west-2"
     ENVIRONMENT: "dev"
-    TARGET_ACCOUNT: "${{ fromJson('{\"prod\": \"559050248035\", \"dev\": \"123456789012\", \"staging\": \"987654321098\"}')[github.event.inputs.environment] }}"
+    TARGET_ACCOUNT: "${{ fromJson('{\"prod\": \"864981715246\", \"dev\": \"559050248035\", \"staging\": \"890742571404\"}')[github.event.inputs.environment] }}"
 
 jobs:
   deploy:

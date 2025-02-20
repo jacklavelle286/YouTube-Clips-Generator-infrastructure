@@ -2,7 +2,7 @@ name: Terraform Deployment - DEV
 
 on:
   push:
-    branches: [ "main" ]  # Or trigger as needed for your dev environment
+    branches: [ "main" ]  
 
 env:
   ENVIRONMENT: "dev"

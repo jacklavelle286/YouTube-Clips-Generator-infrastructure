@@ -1,4 +1,3 @@
-// providers.tf
 provider "aws" {
   region = var.region
 }
@@ -6,9 +5,4 @@ provider "aws" {
 terraform {
   backend "remote" {
   }
-}
-
-provider "aws" {
-  alias = "shared_services"
-  access_key = 
 }

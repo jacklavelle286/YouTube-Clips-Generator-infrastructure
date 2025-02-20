@@ -3,6 +3,6 @@ provider "aws" {
 }
 
 terraform {
-  backend "remote" {
+  backend "s3" {
   }
 }

@@ -8,6 +8,11 @@ env:
   REGION: "eu-west-2"
   ENVIRONMENT: "dev"  # Allowed values: "prod", "dev", "staging"
 
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

@@ -7,7 +7,6 @@ on:
 env:
   REGION: "eu-west-2"
   ENVIRONMENT: "dev"  # Allowed values: "prod", "dev", "staging"
-  TARGET_ACCOUNT: "${{ fromJson('{\"prod\": \"864981715246\", \"dev\": \"559050248035\", \"staging\": \"890742571404\"}')[env.ENVIRONMENT] }}"
 
 jobs:
   deploy:
@@ -16,10 +15,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set TARGET_ACCOUNT based on ENVIRONMENT
+        run: |
+          if [ "${{ env.ENVIRONMENT }}" = "prod" ]; then
+            echo "TARGET_ACCOUNT=864981715246" >> $GITHUB_ENV
+          elif [ "${{ env.ENVIRONMENT }}" = "staging" ]; then
+            echo "TARGET_ACCOUNT=890742571404" >> $GITHUB_ENV
+          else
+            echo "TARGET_ACCOUNT=559050248035" >> $GITHUB_ENV
+          fi
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          # Construct the role ARN using TARGET_ACCOUNT
+          # Now TARGET_ACCOUNT is available in the env context
           role-to-assume: "arn:aws:iam::${{ env.TARGET_ACCOUNT }}:role/OIDCRole"
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.REGION }}

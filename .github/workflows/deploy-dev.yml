@@ -1,4 +1,4 @@
-name: Terraform Deployment - DEV Environment Pipeline
+name: Terraform Deployment - DEV Environment
 
 on:
   push:
@@ -41,7 +41,7 @@ jobs:
             -backend-config="bucket=${{ env.TARGET_ACCOUNT }}-${{ env.REGION }}-backend-infra-tf-yt" \
             -backend-config="region=${{ env.REGION }}" \
             -backend-config="dynamodb_table=${{ env.TARGET_ACCOUNT }}-${{ env.REGION }}-backend-infra-tf-yt-lock" \
-            -backend-config="key=terraform.tfstate"
+            -backend-config="key=terraform/state.tfstate"
 
       - name: Terraform Plan
         run: terraform plan -var="environment=${{ env.ENVIRONMENT }}" -var="region=${{ env.REGION }}"

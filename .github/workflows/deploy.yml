@@ -5,9 +5,9 @@ on:
     branches: [ "main" ]
 
 env:
-    REGION: "eu-west-2"
-    ENVIRONMENT: "dev"
-    TARGET_ACCOUNT: "${{ fromJson('{\"prod\": \"864981715246\", \"dev\": \"559050248035\", \"staging\": \"890742571404\"}')[github.event.inputs.environment] }}"
+  REGION: "eu-west-2"
+  ENVIRONMENT: "dev"  # Allowed values: "prod", "dev", "staging"
+  TARGET_ACCOUNT: "${{ fromJson('{\"prod\": \"864981715246\", \"dev\": \"559050248035\", \"staging\": \"890742571404\"}')[github.event.inputs.environment] }}"
 
 jobs:
   deploy:
@@ -16,11 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          role-to-assume: "arn:aws:iam::${{ env.OIDC_ROLE_ARN }}:role/OIDCRole"
+          # Construct the role ARN using TARGET_ACCOUNT
+          role-to-assume: "arn:aws:iam::${{ env.TARGET_ACCOUNT }}:role/OIDCRole"
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.REGION }}
 

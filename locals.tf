@@ -6,10 +6,10 @@ locals {
 
 locals {
   account_map = {
-    prod    = "559050248035"
-    dev     = "123456789012"
-    staging = "987654321098"
+    prod    = "864981715246"
+    dev     = "559050248035"
+    staging = "890742571404"
   }
   // Look up the target account from the environment variable.
-  target_account = lookup(local.account_map, var.environment, "123456789012")
+  target_account = lookup(local.account_map, var.environment)
 }

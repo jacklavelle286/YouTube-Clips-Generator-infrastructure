@@ -54,3 +54,5 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -var="environment=${{ env.ENVIRONMENT }}" -var="region=${{ env.REGION }}"
+
+

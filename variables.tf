@@ -17,8 +17,10 @@ variable "region" {
 
 variable "team" {
   type = string
+  default = "infra"
 }
 
 variable "project" {
   type = string
+  default = "yt-clips"
 }

@@ -6,3 +6,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::${local.target_account}:role/OIDCRole"
   }
 }
+
+terraform {
+  
+}

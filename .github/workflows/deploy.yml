@@ -1,6 +1,8 @@
 name: Terraform Deployment
 
 on:
+  push:
+      branches: [ "main" ]
   workflow_dispatch:
     inputs:
       environment:
@@ -10,8 +12,6 @@ on:
 
 env:
   REGION: "eu-west-2"
-  # Mapping of environments to AWS account IDs for backend config.
-  # (This duplicates the mapping from Terraform because backend config doesn't support variables.)
   TARGET_ACCOUNT: "${{ fromJson('{\"prod\": \"559050248035\", \"dev\": \"123456789012\", \"staging\": \"987654321098\"}')[github.event.inputs.environment] }}"
 
 jobs:

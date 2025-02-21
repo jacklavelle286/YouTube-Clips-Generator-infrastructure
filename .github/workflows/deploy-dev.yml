@@ -5,16 +5,16 @@ on:
     inputs:
         environment:
             description: "Environment, either dev test or prod"
-            required: True
+            required: true
         region:
             description: "Region for deployment"
-            required: True
+            required: true
         assume_role:
             description: "Role which github actions will asssume"
-            required: True
+            required: true
         account_id:
             description: "current account id"
-            required: True
+            required: true
   
 
 env:

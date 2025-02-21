@@ -1,24 +1,21 @@
 name: Terraform Deployment
 
 on:
+  
   workflow_dispatch:
     inputs:
       environment:
         description: "Environment, either dev, test, or prod"
         required: true
-        default: "dev"
       region:
         description: "Region for deployment"
         required: true
-        default: "eu-west-2"
       assume_role:
         description: "ARN of the role for GitHub Actions to assume (not used in Terraform code)"
         required: true
-        default: "arn:aws:iam::559050248035:role/OIDCRole"
       account_id:
         description: "Current account id (not used in Terraform code)"
         required: true
-        default: "559050248035"
 
 env:
   TF_VAR_environment: ${{ github.event.inputs.environment }}

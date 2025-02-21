@@ -1,13 +1,28 @@
 name: Terraform Deployment 
 
 on:
-  push:
-    branches: [ "main" ]  
+  workflow_dispatch:
+    inputs:
+        environment:
+            description: "Environment, either dev test or prod"
+            required: True
+        region:
+            description: "Region for deployment"
+            required: True
+        assume_role:
+            description: "Role which github actions will asssume"
+            required: True
+        account_id:
+            description: "current account id"
+            required: True
+  
 
 env:
-  ENVIRONMENT: "dev"
-  REGION: "eu-west-2"
-  TARGET_ACCOUNT: "559050248035"
+  TF_VAR_environment: ${{ inputs.environment }}
+  TF_VAR_region: ${{ inputs.region }}
+  TF_VAR_assume_role: ${{ inputs.assume_role }}
+  TF_VAR_account_id: ${{ inputs.account_id }}
+
 
 permissions:
   id-token: write
@@ -23,9 +38,9 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          role-to-assume: "arn:aws:iam::${{ env.TARGET_ACCOUNT }}:role/OIDCRole"
+          role-to-assume: ${{ inputs.assume_role }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          aws-region: ${{ env.REGION }}
+          aws-region: ${{ inputs.region }}
 
       - name: STS Get Caller Identity
         run: aws sts get-caller-identity
@@ -38,13 +53,13 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init \
-            -backend-config="bucket=${{ env.TARGET_ACCOUNT }}-${{ env.REGION }}-backend-infra-tf-yt" \
-            -backend-config="region=${{ env.REGION }}" \
-            -backend-config="dynamodb_table=${{ env.TARGET_ACCOUNT }}-${{ env.REGION }}-backend-infra-tf-yt-lock" \
+            -backend-config="bucket=${{ inputs.account_id }}-${{ inputs.region }}-backend-infra-tf-yt" \
+            -backend-config="region=${{ inputs.region }}" \
+            -backend-config="dynamodb_table=${{ env.TARGET_ACCOUNT }}-${{ inputs.region }}-backend-infra-tf-yt-lock" \
             -backend-config="key=terraform/state.tfstate"
 
       - name: Terraform Plan
-        run: terraform plan -var="environment=${{ env.ENVIRONMENT }}" -var="region=${{ env.REGION }}"
+        run: terraform plan -var="environment=${{ env.ENVIRONMENT }}" -var="region=${{ inputs.region }}"
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="environment=${{ env.ENVIRONMENT }}" -var="region=${{ env.REGION }}"
+        run: terraform apply -auto-approve -var="environment=${{ env.ENVIRONMENT }}" -var="region=${{ inputs.region }}"

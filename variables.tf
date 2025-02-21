@@ -15,12 +15,20 @@ variable "region" {
 }
 
 
-variable "team" {
+variable "environment" {
   type = string
-  default = "infra"
+  description = "Environment to launch in"
 }
 
-variable "project" {
+
+data "aws_caller_identity" "current" {}
+
+
+variable "assume_role" {
+    default = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/OIDCRole"
+  }
+
+variable "account_id" {
   type = string
-  default = "yt-clips"
+  description = "the account id which the resources are being launched in"
 }

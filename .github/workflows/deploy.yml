@@ -21,10 +21,10 @@ on:
 
 env:
   # When triggered by push, github.event.inputs is empty, so we use the defaults.
-  TF_VAR_environment: ${{ github.event.inputs.environment || 'dev' }}
-  TF_VAR_region: ${{ github.event.inputs.region || 'eu-west-2' }}
-  TF_VAR_assume_role: ${{ github.event.inputs.assume_role || 'arn:aws:iam::559050248035:role/OIDCRole' }}
-  TF_VAR_account_id: ${{ github.event.inputs.account_id || '559050248035' }}
+  TF_VAR_environment: ${{ github.event.inputs.environment  }}
+  TF_VAR_region: ${{ github.event.inputs.region }}
+  TF_VAR_assume_role: ${{ github.event.inputs.assume_role  }}
+  TF_VAR_account_id: ${{ github.event.inputs.account_id }}
 
 permissions:
   id-token: write

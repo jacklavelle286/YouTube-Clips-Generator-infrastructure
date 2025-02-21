@@ -15,12 +15,6 @@ variable "region" {
 }
 
 
-variable "environment" {
-  type = string
-  description = "Environment to launch in"
-}
-
-
 data "aws_caller_identity" "current" {}
 
 

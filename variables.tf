@@ -19,10 +19,11 @@ data "aws_caller_identity" "current" {}
 
 
 variable "assume_role" {
-    default = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/OIDCRole"
-  }
+  type        = string
+  description = "the assume role arn"
+}
 
 variable "account_id" {
-  type = string
+  type        = string
   description = "the account id which the resources are being launched in"
 }
